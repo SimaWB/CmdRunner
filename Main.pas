@@ -9,14 +9,17 @@ uses
 type
   TfrmCmdRunner = class(TForm)
     pnlTop: TPanel;
-    BitBtn1: TBitBtn;
+    btnOpen: TBitBtn;
     PageControl1: TPageControl;
-    BitBtn2: TBitBtn;
-    procedure BitBtn1Click(Sender: TObject);
-    procedure BitBtn2Click(Sender: TObject);
+    btnClose: TBitBtn;
+    StatusBar1: TStatusBar;
+    procedure FormCreate(Sender: TObject);
+    procedure btnOpenClick(Sender: TObject);
+    procedure btnCloseClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
   private
     { Private declarations }
+    procedure ShowBtnHint(Sender: TObject);
   public
     { Public declarations }
   end;
@@ -28,12 +31,18 @@ implementation
 
 {$R *.dfm}
 
-procedure TfrmCmdRunner.BitBtn1Click(Sender: TObject);
+procedure TfrmCmdRunner.FormCreate(Sender: TObject);
+begin
+  Application.OnHint := ShowBtnHint;
+  ShowHint := True;
+end;
+
+procedure TfrmCmdRunner.btnOpenClick(Sender: TObject);
 begin
   TCmdTabSheet.Create(PageControl1);
 end;
 
-procedure TfrmCmdRunner.BitBtn2Click(Sender: TObject);
+procedure TfrmCmdRunner.btnCloseClick(Sender: TObject);
 begin
   if PageControl1.ActivePage <> nil then
     TCmdTabSheet(PageControl1.ActivePage).Close;
@@ -45,6 +54,11 @@ var
 begin
   for I := PageControl1.PageCount-1 downto 0 do
      TCmdTabSheet(PageControl1.Pages[I]).Close;
+end;
+
+procedure TfrmCmdRunner.ShowBtnHint(Sender: TObject);
+begin
+  StatusBar1.SimpleText := Application.Hint;
 end;
 
 end.
