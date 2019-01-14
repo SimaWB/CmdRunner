@@ -11,10 +11,12 @@ type
     procedure Resize; override;
   private
     ConsoleHandle: HWND;
+    ConsolePID: DWORD;
     Timer: TTimer;
 
     procedure RunCmd;
     procedure TimerOnTimer(Sender: TObject);
+    function IsCmdRunning: Boolean;
   public
     constructor Create(PageCtrl: TPageControl); reintroduce;
     destructor Destroy; override;
@@ -27,6 +29,7 @@ type
 
 implementation
 
+uses TlHelp32;
 
 { TCmdTabSheet }
 
@@ -41,6 +44,8 @@ end;
 constructor TCmdTabSheet.Create(PageCtrl: TPageControl);
 begin
   inherited Create(PageCtrl.Owner);
+  ConsoleHandle := 0;
+  ConsolePID := 0;
   PageControl := PageCtrl;
   Caption :=  Format('Cmd %d', [TabIndex]);
   PageCtrl.ActivePage := Self;
@@ -59,6 +64,31 @@ end;
 destructor TCmdTabSheet.Destroy;
 begin
   inherited;
+end;
+
+function TCmdTabSheet.IsCmdRunning: Boolean;
+var
+  hSnapshot: THandle;
+  EntryParentProc: TProcessEntry32;
+begin
+  Result := False;
+  hSnapshot := CreateToolhelp32Snapshot(TH32CS_SNAPPROCESS, 0);
+  if hSnapshot = INVALID_HANDLE_VALUE then
+    Exit;
+
+  try
+    EntryParentProc.dwSize := SizeOf(EntryParentProc);
+    if Process32First(hSnapshot, EntryParentProc) then
+      repeat
+        if EntryParentProc.th32ProcessID = ConsolePID then
+        begin
+          Result := True;
+          Break;
+        end;
+      until not Process32Next(hSnapshot, EntryParentProc);
+  finally
+    CloseHandle(hSnapshot);
+  end;
 end;
 
 procedure TCmdTabSheet.Resize;
@@ -94,6 +124,7 @@ begin
       if AttachConsole(ProcessInfo.dwProcessId) then
       begin
         ConsoleHandle := GetConsoleWindow;
+        ConsolePID := ProcessInfo.dwProcessId;
         FreeConsole;
         Break;
       end;
@@ -118,7 +149,8 @@ end;
 
 procedure TCmdTabSheet.TimerOnTimer(Sender: TObject);
 begin
-  //
+  if not IsCmdRunning then
+    Close;
 end;
 
 end.
