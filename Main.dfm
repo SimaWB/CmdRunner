@@ -11,6 +11,7 @@ object frmCmdRunner: TfrmCmdRunner
   Font.Name = 'Tahoma'
   Font.Style = []
   OldCreateOrder = False
+  OnClose = FormClose
   PixelsPerInch = 96
   TextHeight = 13
   object pnlTop: TPanel
@@ -20,7 +21,6 @@ object frmCmdRunner: TfrmCmdRunner
     Height = 27
     Align = alTop
     TabOrder = 0
-    ExplicitTop = -6
     object BitBtn1: TBitBtn
       Left = 1
       Top = 1
@@ -30,8 +30,6 @@ object frmCmdRunner: TfrmCmdRunner
       Caption = 'Open'
       TabOrder = 0
       OnClick = BitBtn1Click
-      ExplicitLeft = 4
-      ExplicitTop = 2
     end
     object BitBtn2: TBitBtn
       Left = 76
@@ -42,8 +40,6 @@ object frmCmdRunner: TfrmCmdRunner
       Caption = 'Close'
       TabOrder = 1
       OnClick = BitBtn2Click
-      ExplicitLeft = 96
-      ExplicitTop = 8
     end
   end
   object PageControl1: TPageControl
@@ -53,6 +49,6 @@ object frmCmdRunner: TfrmCmdRunner
     Height = 272
     Align = alClient
     TabOrder = 1
-    ExplicitTop = 32
+    TabPosition = tpBottom
   end
 end
