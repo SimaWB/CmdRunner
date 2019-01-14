@@ -27,7 +27,7 @@ object frmCmdRunner: TfrmCmdRunner
       Top = 1
       Width = 25
       Height = 25
-      Hint = 'Yeni'
+      Hint = 'New'
       Align = alLeft
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
@@ -68,7 +68,7 @@ object frmCmdRunner: TfrmCmdRunner
       Top = 1
       Width = 25
       Height = 25
-      Hint = 'Aktif pencereyi kapat'
+      Hint = 'Close active page'
       Align = alLeft
       Glyph.Data = {
         36030000424D3603000000000000360000002800000010000000100000000100
@@ -113,7 +113,7 @@ object frmCmdRunner: TfrmCmdRunner
     Align = alClient
     TabOrder = 0
     TabPosition = tpBottom
-    ExplicitHeight = 272
+    ExplicitTop = 21
   end
   object StatusBar1: TStatusBar
     Left = 0
