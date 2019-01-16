@@ -17,6 +17,7 @@ type
     procedure RunCmd;
     procedure TimerOnTimer(Sender: TObject);
     function IsCmdRunning: Boolean;
+    function GetCaption(const Ind: Integer): String;
   public
     constructor Create(PageCtrl: TPageControl); reintroduce;
     destructor Destroy; override;
@@ -38,16 +39,17 @@ begin
   Timer.Enabled := False;
   if ConsoleHandle <> 0 then
     SendMessage(ConsoleHandle, WM_CLOSE,0,0);
-  TabVisible := False;
 end;
 
 constructor TCmdTabSheet.Create(PageCtrl: TPageControl);
+var
+  Style: Longint;
 begin
   inherited Create(PageCtrl.Owner);
   ConsoleHandle := 0;
   ConsolePID := 0;
   PageControl := PageCtrl;
-  Caption :=  Format('Cmd %d', [TabIndex]);
+  Caption := GetCaption(0);
   PageCtrl.ActivePage := Self;
 
   Timer := TTimer.Create(Self);
@@ -58,12 +60,32 @@ begin
   RunCmd;
 
   if ConsoleHandle <> 0 then
+  begin
+    Windows.SetParent(ConsoleHandle, Handle);
+
+    Style := GetWindowLong(ConsoleHandle, GWL_STYLE);
+    SetWindowLong(ConsoleHandle, GWL_STYLE, Style and (not (WS_CAPTION)) or DS_MODALFRAME or WS_DLGFRAME);
+    Resize;
+    ShowWindow(ConsoleHandle, SW_MAXIMIZE); // SW_SHOWMAXIMIZED, SW_MAXIMIZE
+    
     Timer.Enabled := True;
+  end;
 end;
 
 destructor TCmdTabSheet.Destroy;
 begin
-  inherited;
+  Close;
+  inherited Destroy;
+end;
+
+function TCmdTabSheet.GetCaption(const Ind: Integer): String;
+var
+  I: Integer;
+begin
+  Result := Format('Cmd (%d)', [Ind]);
+  for I := 0 to PageControl.PageCount-1 do
+     if PageControl.Pages[I].Caption = Result then
+       Result := GetCaption(I+1)
 end;
 
 function TCmdTabSheet.IsCmdRunning: Boolean;
@@ -104,7 +126,6 @@ var
   Attempt: Integer;
   StartupInfo: TStartupInfo;
   ProcessInfo: TProcessInformation;
-  Style: Longint;
 begin
   ConsoleHandle := 0;
   FillChar(StartupInfo, SizeOf(TStartupInfo), 0);
@@ -134,23 +155,12 @@ begin
     CloseHandle(ProcessInfo.hThread);
     CloseHandle(ProcessInfo.hProcess);
   end;
-
-  if ConsoleHandle <> 0 then
-  begin
-    Windows.SetParent(ConsoleHandle, Handle);
-
-    Style := GetWindowLong(ConsoleHandle, GWL_STYLE);
-    SetWindowLong(ConsoleHandle, GWL_STYLE, Style and (not (WS_CAPTION)) or DS_MODALFRAME or WS_DLGFRAME);
-    Resize;
-    ShowWindow(ConsoleHandle, SW_MAXIMIZE); // SW_SHOWMAXIMIZED, SW_MAXIMIZE
-  end;
-
 end;
 
 procedure TCmdTabSheet.TimerOnTimer(Sender: TObject);
 begin
   if not IsCmdRunning then
-    Close;
+    Destroy;
 end;
 
 end.
