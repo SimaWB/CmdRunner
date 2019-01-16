@@ -45,9 +45,9 @@ constructor TCmdTabSheet.Create(PageCtrl: TPageControl);
 var
   Style: Longint;
 begin
-  inherited Create(PageCtrl.Owner);
   ConsoleHandle := 0;
   ConsolePID := 0;
+  inherited Create(PageCtrl);
   PageControl := PageCtrl;
   Caption := GetCaption(0);
   PageCtrl.ActivePage := Self;
@@ -64,7 +64,7 @@ begin
     Windows.SetParent(ConsoleHandle, Handle);
 
     Style := GetWindowLong(ConsoleHandle, GWL_STYLE);
-    SetWindowLong(ConsoleHandle, GWL_STYLE, Style and (not (WS_CAPTION)) or DS_MODALFRAME or WS_DLGFRAME);
+    SetWindowLong(ConsoleHandle, GWL_STYLE, Style and not WS_BORDER and not WS_SIZEBOX and not WS_DLGFRAME );
     Resize;
     ShowWindow(ConsoleHandle, SW_MAXIMIZE); // SW_SHOWMAXIMIZED, SW_MAXIMIZE
     
