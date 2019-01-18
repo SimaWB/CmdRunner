@@ -136,6 +136,7 @@ var
   Attempt: Integer;
   StartupInfo: TStartupInfo;
   ProcessInfo: TProcessInformation;
+  Dir: PWideChar;
 begin
   ConsoleHandle := 0;
   FillChar(StartupInfo, SizeOf(TStartupInfo), 0);
@@ -144,10 +145,14 @@ begin
   StartupInfo.dwFlags := STARTF_USESHOWWINDOW;
   StartupInfo.wShowWindow := SW_HIDE;
 
+  if CurDir = '' then
+    Dir := nil
+  else
+    Dir := PWideChar(CurDir);
   CmdLine := 'cmd.exe';
   UniqueString(CmdLine);
   if CreateProcess(nil, PWideChar(CmdLine), nil, nil, False,
-    CREATE_NEW_CONSOLE, nil, PWideChar(CurDir), StartupInfo, ProcessInfo) then
+    CREATE_NEW_CONSOLE, nil, Dir, StartupInfo, ProcessInfo) then
   begin
     Attempt := 100;
     while (Attempt > 0) do

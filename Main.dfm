@@ -2182,11 +2182,14 @@ object frmCmdRunner: TfrmCmdRunner
       Top = 1
       Width = 37
       Height = 25
+      Hint = 'Open command prompt'
       Align = alLeft
       DropDownMenu = PopupMenu1
       HotImageIndex = 2
       ImageIndex = 2
       Images = ImageList1
+      ParentShowHint = False
+      ShowHint = False
       Style = bsSplitButton
       TabOrder = 1
       OnClick = btnOpenClick
