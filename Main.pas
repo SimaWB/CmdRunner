@@ -4,19 +4,33 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls, CmdTabSheet;
+  Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls, CmdTabSheet, ImgList, Menus;
 
 type
   TfrmCmdRunner = class(TForm)
     pnlTop: TPanel;
-    btnOpen: TBitBtn;
     PageControl1: TPageControl;
     btnClose: TBitBtn;
     StatusBar1: TStatusBar;
+    ImageList1: TImageList;
+    PopupMenu1: TPopupMenu;
+    Deneme1: TMenuItem;
+    MyDocuments1: TMenuItem;
+    btnOpen: TButton;
+    AppData1: TMenuItem;
+    Windows1: TMenuItem;
+    System1: TMenuItem;
+    N1: TMenuItem;
+    SelectFolder1: TMenuItem;
+    ProgramFles1: TMenuItem;
+    FileOpenDialog1: TFileOpenDialog;
     procedure FormCreate(Sender: TObject);
-    procedure btnOpenClick(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
+    procedure btnOpenClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
+
+    procedure btnOpenMenuClick(Sender: TObject);
+    procedure SelectFolder1Click(Sender: TObject);
   private
     { Private declarations }
     procedure ShowBtnHint(Sender: TObject);
@@ -29,17 +43,22 @@ var
 
 implementation
 
+uses SHFolder;
+
 {$R *.dfm}
+
+function GetSpecialFolderPath(FolderId: Integer): string;
+var
+  aPath: array[0..MAX_PATH] of Char;
+begin
+  SHGetFolderPath(0, FolderId, 0, 0, aPath);
+  Result := aPath;
+end;
 
 procedure TfrmCmdRunner.FormCreate(Sender: TObject);
 begin
   Application.OnHint := ShowBtnHint;
   ShowHint := True;
-end;
-
-procedure TfrmCmdRunner.btnOpenClick(Sender: TObject);
-begin
-  TCmdTabSheet.Create(PageControl1);
 end;
 
 procedure TfrmCmdRunner.btnCloseClick(Sender: TObject);
@@ -48,12 +67,28 @@ begin
     TCmdTabSheet(PageControl1.ActivePage).Destroy;
 end;
 
+procedure TfrmCmdRunner.btnOpenClick(Sender: TObject);
+begin
+  TCmdTabSheet.Create(PageControl1);
+end;
+
+procedure TfrmCmdRunner.btnOpenMenuClick(Sender: TObject);
+begin
+  TCmdTabSheet.Create(PageControl1, GetSpecialFolderPath(TMenuItem(Sender).Tag));
+end;
+
 procedure TfrmCmdRunner.FormClose(Sender: TObject; var Action: TCloseAction);
 var
   I: Integer;
 begin
   for I := PageControl1.PageCount-1 downto 0 do
-     TCmdTabSheet(PageControl1.Pages[I]).Destroy
+    TCmdTabSheet(PageControl1.Pages[I]).Destroy
+end;
+
+procedure TfrmCmdRunner.SelectFolder1Click(Sender: TObject);
+begin
+  if FileOpenDialog1.Execute then
+    TCmdTabSheet.Create(PageControl1, FileOpenDialog1.FileName);
 end;
 
 procedure TfrmCmdRunner.ShowBtnHint(Sender: TObject);

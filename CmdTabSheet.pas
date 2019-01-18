@@ -9,17 +9,18 @@ type
   TCmdTabSheet = class(TTabSheet)
   protected
     procedure Resize; override;
+    procedure DoShow; override;
   private
     ConsoleHandle: HWND;
     ConsolePID: DWORD;
     Timer: TTimer;
 
-    procedure RunCmd;
+    procedure RunCmd(CurDir: String = '');
     procedure TimerOnTimer(Sender: TObject);
     function IsCmdRunning: Boolean;
     function GetCaption(const Ind: Integer): String;
   public
-    constructor Create(PageCtrl: TPageControl); reintroduce;
+    constructor Create(PageCtrl: TPageControl; CurDir: String=''); reintroduce;
     destructor Destroy; override;
 
     procedure Close;
@@ -41,7 +42,7 @@ begin
     SendMessage(ConsoleHandle, WM_CLOSE,0,0);
 end;
 
-constructor TCmdTabSheet.Create(PageCtrl: TPageControl);
+constructor TCmdTabSheet.Create(PageCtrl: TPageControl; CurDir: String='');
 var
   Style: Longint;
 begin
@@ -57,7 +58,8 @@ begin
   Timer.OnTimer := TimerOnTimer;
   Timer.Enabled := False;
 
-  RunCmd;
+  ImageIndex := 0;
+  RunCmd(CurDir);
 
   if ConsoleHandle <> 0 then
   begin
@@ -67,9 +69,10 @@ begin
     SetWindowLong(ConsoleHandle, GWL_STYLE, Style and not WS_BORDER and not WS_SIZEBOX and not WS_DLGFRAME );
     Resize;
     ShowWindow(ConsoleHandle, SW_MAXIMIZE); // SW_SHOWMAXIMIZED, SW_MAXIMIZE
-    
-    Timer.Enabled := True;
   end;
+
+  if ConsolePID <> 0 then
+    Timer.Enabled := True;
 end;
 
 destructor TCmdTabSheet.Destroy;
@@ -78,11 +81,18 @@ begin
   inherited Destroy;
 end;
 
+procedure TCmdTabSheet.DoShow;
+begin
+  inherited DoShow;
+  if ConsoleHandle <> 0 then
+    SetForegroundWindow(ConsoleHandle);
+end;
+
 function TCmdTabSheet.GetCaption(const Ind: Integer): String;
 var
   I: Integer;
 begin
-  Result := Format('Cmd (%d)', [Ind]);
+  Result := Format('(%d)', [Ind]);
   for I := 0 to PageControl.PageCount-1 do
      if PageControl.Pages[I].Caption = Result then
        Result := GetCaption(I+1)
@@ -120,7 +130,7 @@ begin
     SetWindowPos(ConsoleHandle, 0, 0, 0, Width, Height, SWP_ASYNCWINDOWPOS); //SWP_NOSIZE
 end;
 
-procedure TCmdTabSheet.RunCmd;
+procedure TCmdTabSheet.RunCmd(CurDir: String = '');
 var
   CmdLine: string;
   Attempt: Integer;
@@ -136,8 +146,8 @@ begin
 
   CmdLine := 'cmd.exe';
   UniqueString(CmdLine);
-  if CreateProcess(nil, PChar(CmdLine), nil, nil, False,
-    CREATE_NEW_CONSOLE, nil, nil, StartupInfo, ProcessInfo) then
+  if CreateProcess(nil, PWideChar(CmdLine), nil, nil, False,
+    CREATE_NEW_CONSOLE, nil, PWideChar(CurDir), StartupInfo, ProcessInfo) then
   begin
     Attempt := 100;
     while (Attempt > 0) do
@@ -159,8 +169,13 @@ end;
 
 procedure TCmdTabSheet.TimerOnTimer(Sender: TObject);
 begin
+  if ConsolePID = 0 then
+    Exit;
   if not IsCmdRunning then
+  begin
+    Timer.Enabled := False;
     Destroy;
+  end;
 end;
 
 end.
