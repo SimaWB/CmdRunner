@@ -24,6 +24,10 @@ type
     SelectFolder1: TMenuItem;
     ProgramFles1: TMenuItem;
     FileOpenDialog1: TFileOpenDialog;
+    clrBackground: TColorBox;
+    Label1: TLabel;
+    Label2: TLabel;
+    clrForeground: TColorBox;
     procedure FormCreate(Sender: TObject);
     procedure btnCloseClick(Sender: TObject);
     procedure btnOpenClick(Sender: TObject);
@@ -56,9 +60,19 @@ begin
 end;
 
 procedure TfrmCmdRunner.FormCreate(Sender: TObject);
+var
+  I: Integer;
 begin
   Application.OnHint := ShowBtnHint;
   ShowHint := True;
+
+  for I := Low(COLORS) to High(COLORS) do
+  begin
+    clrBackground.AddItem('', TObject(StrToInt(COLORS[I][0])));
+    clrForeground.AddItem('', TObject(StrToInt(COLORS[I][0])));
+  end;
+  clrBackground.ItemIndex := Low(COLORS);
+  clrForeground.ItemIndex := High(COLORS);
 end;
 
 procedure TfrmCmdRunner.btnCloseClick(Sender: TObject);
@@ -69,12 +83,12 @@ end;
 
 procedure TfrmCmdRunner.btnOpenClick(Sender: TObject);
 begin
-  TCmdTabSheet.Create(PageControl1);
+  TCmdTabSheet.Create(PageControl1, clrForeground.ItemIndex, clrBackground.ItemIndex);
 end;
 
 procedure TfrmCmdRunner.btnOpenMenuClick(Sender: TObject);
 begin
-  TCmdTabSheet.Create(PageControl1, GetSpecialFolderPath(TMenuItem(Sender).Tag));
+  TCmdTabSheet.Create(PageControl1, clrForeground.ItemIndex, clrBackground.ItemIndex, GetSpecialFolderPath(TMenuItem(Sender).Tag));
 end;
 
 procedure TfrmCmdRunner.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -88,7 +102,7 @@ end;
 procedure TfrmCmdRunner.SelectFolder1Click(Sender: TObject);
 begin
   if FileOpenDialog1.Execute then
-    TCmdTabSheet.Create(PageControl1, FileOpenDialog1.FileName);
+    TCmdTabSheet.Create(PageControl1, clrForeground.ItemIndex, clrBackground.ItemIndex, FileOpenDialog1.FileName);
 end;
 
 procedure TfrmCmdRunner.ShowBtnHint(Sender: TObject);

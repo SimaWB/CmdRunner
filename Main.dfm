@@ -2135,14 +2135,53 @@ object frmCmdRunner: TfrmCmdRunner
     Left = 0
     Top = 0
     Width = 635
-    Height = 27
+    Height = 25
     Align = alTop
     TabOrder = 1
+    object Label1: TLabel
+      AlignWithMargins = True
+      Left = 85
+      Top = 1
+      Width = 13
+      Height = 23
+      Hint = 'Background color'
+      Margins.Left = 24
+      Margins.Top = 0
+      Margins.Right = 4
+      Margins.Bottom = 0
+      Align = alLeft
+      Caption = 'BC'
+      ParentShowHint = False
+      ShowHint = False
+      Layout = tlCenter
+      ExplicitLeft = 82
+      ExplicitTop = -1
+      ExplicitHeight = 25
+    end
+    object Label2: TLabel
+      AlignWithMargins = True
+      Left = 150
+      Top = 1
+      Width = 13
+      Height = 23
+      Hint = 'Foreground color'
+      Margins.Left = 8
+      Margins.Top = 0
+      Margins.Right = 4
+      Margins.Bottom = 0
+      Align = alLeft
+      Caption = 'FC'
+      ParentShowHint = False
+      ShowHint = False
+      Layout = tlCenter
+      ExplicitLeft = 217
+      ExplicitHeight = 13
+    end
     object btnClose: TBitBtn
       Left = 38
       Top = 1
-      Width = 25
-      Height = 25
+      Width = 23
+      Height = 23
       Hint = 'Close active page'
       Align = alLeft
       Glyph.Data = {
@@ -2181,7 +2220,7 @@ object frmCmdRunner: TfrmCmdRunner
       Left = 1
       Top = 1
       Width = 37
-      Height = 25
+      Height = 23
       Hint = 'Open command prompt'
       Align = alLeft
       DropDownMenu = PopupMenu1
@@ -2193,17 +2232,48 @@ object frmCmdRunner: TfrmCmdRunner
       Style = bsSplitButton
       TabOrder = 1
       OnClick = btnOpenClick
+      ExplicitHeight = 25
+    end
+    object clrBackground: TColorBox
+      Left = 102
+      Top = 1
+      Width = 40
+      Height = 22
+      Hint = 'Select background color'
+      Align = alLeft
+      Selected = clScrollBar
+      Style = [cbCustomColors]
+      ParentShowHint = False
+      ShowHint = False
+      TabOrder = 2
+      ExplicitLeft = 96
+    end
+    object clrForeground: TColorBox
+      Left = 167
+      Top = 1
+      Width = 40
+      Height = 22
+      Hint = 'Select foreground color'
+      Align = alLeft
+      Selected = clScrollBar
+      Style = [cbCustomColors]
+      ParentShowHint = False
+      ShowHint = False
+      TabOrder = 3
+      ExplicitLeft = 169
     end
   end
   object PageControl1: TPageControl
     Left = 0
-    Top = 27
+    Top = 25
     Width = 635
-    Height = 253
+    Height = 255
     Align = alClient
     Images = ImageList1
     TabOrder = 0
     TabPosition = tpBottom
+    ExplicitLeft = 1
+    ExplicitTop = 27
   end
   object StatusBar1: TStatusBar
     Left = 0
