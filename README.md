@@ -1,2 +1,2 @@
 # CmdRunner
-![](https://res.cloudinary.com/delphican/image/upload/v1547819200/Adsız_w6mxbt.png)
+![](https://res.cloudinary.com/delphican/image/upload/v1548146987/CmdRunner__denykq.png)
