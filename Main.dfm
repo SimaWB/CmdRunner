@@ -1,7 +1,7 @@
 object frmCmdRunner: TfrmCmdRunner
   Left = 0
   Top = 0
-  Caption = 'Cmd Runner'
+  Caption = 'Cmd Runner v1.0'
   ClientHeight = 299
   ClientWidth = 635
   Color = clBtnFace
@@ -2154,9 +2154,7 @@ object frmCmdRunner: TfrmCmdRunner
       ParentShowHint = False
       ShowHint = False
       Layout = tlCenter
-      ExplicitLeft = 82
-      ExplicitTop = -1
-      ExplicitHeight = 25
+      ExplicitHeight = 13
     end
     object Label2: TLabel
       AlignWithMargins = True
@@ -2174,7 +2172,6 @@ object frmCmdRunner: TfrmCmdRunner
       ParentShowHint = False
       ShowHint = False
       Layout = tlCenter
-      ExplicitLeft = 217
       ExplicitHeight = 13
     end
     object btnClose: TBitBtn
@@ -2232,7 +2229,6 @@ object frmCmdRunner: TfrmCmdRunner
       Style = bsSplitButton
       TabOrder = 1
       OnClick = btnOpenClick
-      ExplicitHeight = 25
     end
     object clrBackground: TColorBox
       Left = 102
@@ -2246,7 +2242,6 @@ object frmCmdRunner: TfrmCmdRunner
       ParentShowHint = False
       ShowHint = False
       TabOrder = 2
-      ExplicitLeft = 96
     end
     object clrForeground: TColorBox
       Left = 167
@@ -2260,7 +2255,6 @@ object frmCmdRunner: TfrmCmdRunner
       ParentShowHint = False
       ShowHint = False
       TabOrder = 3
-      ExplicitLeft = 169
     end
   end
   object PageControl1: TPageControl
@@ -2272,8 +2266,6 @@ object frmCmdRunner: TfrmCmdRunner
     Images = ImageList1
     TabOrder = 0
     TabPosition = tpBottom
-    ExplicitLeft = 1
-    ExplicitTop = 27
   end
   object StatusBar1: TStatusBar
     Left = 0

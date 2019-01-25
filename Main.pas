@@ -4,7 +4,8 @@ interface
 
 uses
   Windows, Messages, SysUtils, Variants, Classes, Graphics, Controls, Forms,
-  Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls, CmdTabSheet, ImgList, Menus;
+  Dialogs, StdCtrls, Buttons, ExtCtrls, ComCtrls, Menus, ImgList,
+  CmdTabSheet;
 
 type
   TfrmCmdRunner = class(TForm)
@@ -38,6 +39,9 @@ type
   private
     { Private declarations }
     procedure ShowBtnHint(Sender: TObject);
+
+    procedure WMExitSizeMove(var Msg: TMessage); message WM_EXITSIZEMOVE;
+    procedure WMSize(var Msg: TWMSize); message WM_SIZE;
   public
     { Public declarations }
   end;
@@ -108,6 +112,21 @@ end;
 procedure TfrmCmdRunner.ShowBtnHint(Sender: TObject);
 begin
   StatusBar1.SimpleText := Application.Hint;
+end;
+
+procedure TfrmCmdRunner.WMExitSizeMove(var Msg: TMessage);
+begin
+  Inherited;
+  if PageControl1.ActivePage <> nil then
+    TCmdTabSheet(PageControl1.ActivePage).SetForegroundConsole;
+end;
+
+procedure TfrmCmdRunner.WMSize(var Msg: TWMSize);
+begin
+  Inherited;
+  if (Msg.SizeType = SIZE_MAXIMIZED) {or (Msg.SizeType = SIZE_RESTORED)} then { TODO : RESTORED durumuna bir çözüm bulunmalý }
+    if (PageControl1 <> nil) and (PageControl1.ActivePage <> nil) then
+      TCmdTabSheet(PageControl1.ActivePage).SetForegroundConsole;
 end;
 
 end.

@@ -21,11 +21,12 @@ type
     function IsCmdRunning: Boolean;
     function GetCaption(const Ind: Integer): String;
     function GetCommandPrompt: String;
+
   public
     constructor Create(PageCtrl: TPageControl; FColor, BColor: Integer; CurDir: String=''); reintroduce;
     destructor Destroy; override;
 
-    procedure Close;
+    procedure SetForegroundConsole;
   end;
 
   function GetConsoleWindow: HWND; stdcall; external kernel32 name 'GetConsoleWindow';
@@ -56,13 +57,6 @@ implementation
 uses TlHelp32;
 
 { TCmdTabSheet }
-
-procedure TCmdTabSheet.Close;
-begin
-  Timer.Enabled := False;
-  if ConsoleHandle <> 0 then
-    SendMessage(ConsoleHandle, WM_CLOSE,0,0);
-end;
 
 constructor TCmdTabSheet.Create(PageCtrl: TPageControl; FColor, BColor: Integer; CurDir: String='');
 var
@@ -100,15 +94,16 @@ end;
 
 destructor TCmdTabSheet.Destroy;
 begin
-  Close;
+  Timer.Enabled := False;
+  if ConsoleHandle <> 0 then
+    SendMessage(ConsoleHandle, WM_CLOSE,0,0);
   inherited Destroy;
 end;
 
 procedure TCmdTabSheet.DoShow;
 begin
-  inherited DoShow;
-  if ConsoleHandle <> 0 then
-    SetForegroundWindow(ConsoleHandle);
+  SetForegroundConsole;
+  inherited;
 end;
 
 function TCmdTabSheet.GetCaption(const Ind: Integer): String;
@@ -205,6 +200,12 @@ begin
     CloseHandle(ProcessInfo.hThread);
     CloseHandle(ProcessInfo.hProcess);
   end;
+end;
+
+procedure TCmdTabSheet.SetForegroundConsole;
+begin
+  if ConsoleHandle <> 0 then
+    SetForegroundWindow(ConsoleHandle);
 end;
 
 procedure TCmdTabSheet.TimerOnTimer(Sender: TObject);
